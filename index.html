@@ -87,8 +87,8 @@ input,textarea{font:500 17px var(--ui);color:var(--paper);background:rgba(255,25
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-(() => {
-const P={her:'Cutie',,msg:'You light up my World, Thank you for everything cutie ❤️❤️❤️❤️❤️.'};
+(()=>{
+const P={her:'Cutie',msg:'You light up my World, Thank you for everything'};
 const ROOF=40;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 const lerp=(a,b,t)=>a+(b-a)*t, rnd=(a,b)=>a+Math.random()*(b-a);
@@ -340,8 +340,9 @@ function updateBursts(dt){for(let k=bursts.length-1;k>=0;k--){const b=bursts[k];
   if(b.t>b.life){scene.remove(b.o);b.o.geometry.dispose();b.o.material.dispose();bursts.splice(k,1);}}}
 let streetAcc=0;
 function streetFire(n){for(let i=0;i<n;i++)burst(V(rnd(-3,3),rnd(5.5,10),rnd(-22,-13)),fwCols[Math.random()*fwCols.length|0],110,.5);}
-let fireRate=0,fireAcc=0;
-function updateFire(dt){fireAcc+=dt*fireRate;while(fireAcc>=1){fireAcc-=1;burst(V(rnd(-24,24),ROOF+rnd(9,26),rnd(-48,-26)),fwCols[Math.random()*fwCols.length|0],rnd(1,1)>0?140:100);}}
+let fireRate=0,fireAcc=0,fireBase=V(0,ROOF,0);
+function updateFire(dt){fireAcc+=dt*fireRate;while(fireAcc>=1){fireAcc-=1;
+  burst(V(rnd(-24,24),ROOF+rnd(9,26),rnd(-48,-26)),fwCols[Math.random()*fwCols.length|0],rnd(1,1)>0?140:100);}}
 
 /* ---------- hearts ---------- */
 const hearts=[];
@@ -418,7 +419,12 @@ window.addEventListener('keydown',e=>{if(e.code==='Space'&&stage==='plaza'){e.pr
 const song=$('song'),muteBtn=$('mute');
 function startSong(){try{song.currentTime=0;}catch(e){}song.volume=.9;const p=song.play();if(p&&p.catch)p.catch(()=>{});muteBtn.hidden=false;}
 muteBtn.addEventListener('click',()=>{song.muted=!song.muted;muteBtn.classList.toggle('off',song.muted);muteBtn.setAttribute('aria-label',song.muted?'Unmute music':'Mute music');});
-function applyNames(){$('fMsg').textContent=P.msg;$('lTitle').textContent='Happy Diwali, '+P.her;$('lMsg').textContent=P.msg;$('lSig').textContent='— '+P.him;}
+function applyNames(){
+  $('fMsg').textContent=P.msg;
+  $('lTitle').textContent='Happy Diwali, '+P.her;
+  $('lMsg').textContent=P.msg;
+  $('lSig').textContent=P.him ? '— '+P.him : '';
+}
 $('introForm').addEventListener('submit',e=>{e.preventDefault();
   applyNames();
   $('intro').classList.add('off');startSong();run();});
@@ -426,6 +432,7 @@ $('seeRest').addEventListener('click',()=>$('letterWrap').classList.remove('off'
 $('replay').addEventListener('click',()=>{$('letterWrap').classList.add('off');tweens.length=0;window.__pt=0;startSong();run();});
 $('letterWrap').classList.add('off');
 applyNames();
+/* idle preview behind the intro card */
 stage='intro';fireRate=.3;
 frame();
 if(location.hash==='#preview'){$('intro').classList.add('off');run();}
